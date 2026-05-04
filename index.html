@@ -1,0 +1,747 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goldfinger Rental — Drive Luxury. Own the Experience.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C9A84C;
+            --gold-light: #E8D5A3;
+            --gold-dark: #A68B3C;
+            --black: #050505;
+            --deep-black: #000000;
+            --white: #F5F0E8;
+            --white-dim: #D1C9B8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ─── LOADING SCREEN ─── */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: var(--deep-black);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.2s;
+        }
+
+        #loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-visual {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin-bottom: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .luxury-emblem {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .frame-part {
+            stroke: var(--gold);
+            stroke-width: 1.5;
+            fill: none;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: assembleFrame 1.5s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+        }
+
+        .frame-top { animation-delay: 0.2s; }
+        .frame-right { animation-delay: 0.4s; }
+        .frame-bottom { animation-delay: 0.6s; }
+        .frame-left { animation-delay: 0.8s; }
+
+        @keyframes assembleFrame { to { stroke-dashoffset: 0; } }
+
+        .monogram-g {
+            stroke: var(--gold-light);
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 300;
+            stroke-dashoffset: 300;
+            stroke-linecap: square;
+            animation: drawMonogram 2.5s cubic-bezier(0.65, 0, 0.35, 1) 1s forwards;
+        }
+
+        @keyframes drawMonogram { to { stroke-dashoffset: 0; } }
+
+        .emblem-fill {
+            fill: var(--gold);
+            opacity: 0;
+            animation: emblemFillFade 2s ease 2.5s forwards;
+        }
+
+        @keyframes emblemFillFade {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 0.15; transform: scale(1); }
+        }
+
+        .sweep-line {
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(232, 213, 163, 0.2), transparent);
+            position: absolute;
+            top: 0; left: -150%;
+            transform: skewX(-25deg);
+            animation: sweepMove 3s ease-in-out 3s infinite;
+        }
+
+        @keyframes sweepMove {
+            0% { left: -150%; }
+            30%, 100% { left: 150%; }
+        }
+
+        .loader-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 300;
+            letter-spacing: 20px;
+            color: var(--gold);
+            text-transform: uppercase;
+            opacity: 0;
+            margin-right: -20px;
+            animation: brandReveal 2s cubic-bezier(0.4, 0, 0.2, 1) 1.8s forwards;
+        }
+
+        @keyframes brandReveal {
+            from { opacity: 0; transform: translateY(20px); letter-spacing: 30px; }
+            to { opacity: 1; transform: translateY(0); letter-spacing: 20px; }
+        }
+
+        .loader-status {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 400;
+            letter-spacing: 3px;
+            color: var(--gold-dark);
+            margin-top: 25px;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeIn 1s ease 3s forwards;
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* ─── NAVIGATION ─── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 20px 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: transparent;
+        }
+
+        nav.scrolled {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 15px 50px;
+            border-bottom: 1px solid rgba(201,168,76,0.2);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-logo svg { width: 36px; height: 36px; }
+
+        .nav-logo-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--white-dim);
+            text-decoration: none;
+            position: relative;
+            transition: color 0.4s ease;
+        }
+
+        .nav-links a:hover { color: var(--gold); }
+
+        .nav-phone-header {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            color: var(--gold);
+            text-decoration: none;
+            border: 1px solid rgba(201,168,76,0.3);
+            padding: 10px 24px;
+            transition: all 0.4s ease;
+        }
+
+        .nav-phone-header:hover {
+            background: rgba(201,168,76,0.15);
+            border-color: var(--gold);
+        }
+
+        /* ─── HERO ─── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--deep-black);
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            transform: scale(1.05);
+        }
+
+        .hero-bg.loaded {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(5, 5, 5, 1) 100%);
+        }
+
+        .hero-content { position: relative; z-index: 2; }
+
+        .hero-gold-line {
+            width: 1px; height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+            margin: 0 auto 40px;
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 300;
+            letter-spacing: 4px;
+            line-height: 1.15;
+            color: var(--white);
+            margin-bottom: 24px;
+            opacity: 0;
+            animation: fadeUp 1.2s ease 0.2s forwards;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .hero h1 span { color: var(--gold); font-style: italic; font-weight: 400; }
+
+        .hero-sub {
+            font-size: clamp(0.85rem, 1.5vw, 1rem);
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: var(--white-dim);
+            max-width: 600px;
+            margin: 0 auto 50px;
+            line-height: 1.8;
+            opacity: 0;
+            animation: fadeUp 1.2s ease 0.5s forwards;
+        }
+
+        .hero-phones {
+            display: flex; gap: 20px;
+            justify-content: center; flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp 1.2s ease 0.8s forwards;
+        }
+
+        .hero-phone-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-size: 0.8rem; font-weight: 500; letter-spacing: 2px;
+            color: var(--gold); text-decoration: none;
+            border: 1px solid rgba(201,168,76,0.3);
+            padding: 14px 32px; transition: all 0.5s ease;
+            background: rgba(201,168,76,0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-phone-btn:hover {
+            border-color: var(--gold);
+            background: rgba(201,168,76,0.15);
+            box-shadow: 0 0 30px rgba(201,168,76,0.2);
+            transform: translateY(-2px);
+        }
+
+        /* ─── SECTIONS ─── */
+        .section { padding: 140px 0; position: relative; background: var(--black); }
+        .section-alt { background: var(--deep-black); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+        .section-label {
+            font-size: 0.65rem; font-weight: 600; letter-spacing: 5px;
+            text-transform: uppercase; color: var(--gold); margin-bottom: 20px; display: block;
+        }
+
+        .section h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 300; letter-spacing: 2px; color: var(--white);
+            margin-bottom: 30px; line-height: 1.2;
+        }
+
+        .section p {
+            font-size: 1rem; font-weight: 300; line-height: 1.9;
+            color: var(--white-dim); max-width: 650px;
+        }
+
+        .gold-divider { width: 40px; height: 1px; background: var(--gold); margin: 30px 0; opacity: 0.6; }
+
+        /* ─── ABOUT ─── */
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+
+        /* ─── SERVICES ─── */
+        .services-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-top: 60px; }
+        .service-card {
+            text-align: center; padding: 45px 20px;
+            border: 1px solid rgba(201,168,76,0.1); background: rgba(10, 10, 10, 0.8);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .service-card:hover { transform: translateY(-8px); border-color: var(--gold); background: var(--black); }
+        .service-icon { width: 34px; height: 34px; margin-bottom: 20px; stroke: var(--gold); fill: none; stroke-width: 1.2; }
+        .service-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; margin-bottom: 12px; letter-spacing: 1px; }
+        .service-card p { font-size: 0.72rem; color: var(--white-dim); line-height: 1.6; }
+
+        /* ─── WHY CHOOSE US ─── */
+        .why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 60px; }
+        .why-item { text-align: center; }
+        .why-number { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; color: var(--gold); margin-bottom: 10px; opacity: 0.4; }
+        .why-item h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; margin-bottom: 15px; letter-spacing: 1px; }
+        .why-item p { font-size: 0.85rem; color: var(--white-dim); line-height: 1.6; }
+
+        /* ─── TESTIMONIALS ─── */
+        .testimonials-section { text-align: center; }
+        .testimonial-slider { max-width: 800px; margin: 60px auto 0; position: relative; min-height: 180px; }
+        .testimonial-slide { position: absolute; width: 100%; opacity: 0; transition: 0.8s ease; pointer-events: none; }
+        .testimonial-slide.active { opacity: 1; pointer-events: auto; position: relative; }
+        .testimonial-quote { font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; font-style: italic; margin-bottom: 25px; line-height: 1.4; color: var(--white); }
+        .testimonial-author { font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 500; }
+
+        /* ─── CONTACT ─── */
+        .contact-section { text-align: center; }
+        .contact-rep { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--gold); margin-bottom: 5px; }
+        .contact-role { font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; color: var(--white-dim); margin-bottom: 40px; display: block; }
+        
+        .contact-grid-numbers {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .phone-btn-contact {
+            display: inline-flex; align-items: center; gap: 14px;
+            font-size: 1.1rem; font-weight: 500; letter-spacing: 2px;
+            color: var(--gold); text-decoration: none;
+            border: 1px solid rgba(201,168,76,0.3); padding: 18px 45px;
+            transition: all 0.4s ease;
+            background: rgba(201,168,76,0.03);
+        }
+
+        .phone-btn-contact:hover {
+            border-color: var(--gold);
+            background: rgba(201,168,76,0.12);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .phone-btn-contact svg { width: 20px; height: 20px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+
+        /* ─── FOOTER ─── */
+        footer { background: var(--deep-black); border-top: 1px solid rgba(201,168,76,0.15); padding: 80px 0 50px; text-align: center; }
+        .footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; letter-spacing: 5px; color: var(--gold); text-transform: uppercase; margin-bottom: 40px; }
+        .footer-copy { font-size: 0.65rem; color: rgba(184,176,160,0.4); letter-spacing: 2px; }
+
+        /* ─── ANIMATIONS ─── */
+        .fade-in { opacity: 0; transform: translateY(40px); transition: all 1s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1024px) {
+            .services-grid { grid-template-columns: repeat(3, 1fr); }
+            .why-grid { grid-template-columns: repeat(2, 1fr); }
+            .about-grid { grid-template-columns: 1fr; gap: 60px; text-align: center; }
+            .about-grid p { margin: 0 auto; }
+            .gold-divider { margin: 30px auto; }
+        }
+        @media (max-width: 768px) {
+            .services-grid { grid-template-columns: 1fr; }
+            .why-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .contact-grid-numbers { flex-direction: column; align-items: center; }
+            .phone-btn-contact { width: 100%; max-width: 320px; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen (Preserved Luxury Emblem) -->
+    <div id="loader">
+        <div class="loader-visual">
+            <div class="sweep-line"></div>
+            <svg class="luxury-emblem" viewBox="0 0 100 100">
+                <path class="frame-part frame-top" d="M50,10 L90,50" />
+                <path class="frame-part frame-right" d="M90,50 L50,90" />
+                <path class="frame-part frame-bottom" d="M50,90 L10,50" />
+                <path class="frame-part frame-left" d="M10,50 L50,10" />
+                <polygon class="emblem-fill" points="50,15 85,50 50,85 15,50" />
+                <path class="monogram-g" d="M68,35 C58,28 42,28 35,38 C28,48 30,62 42,68 C52,73 65,68 68,58 L68,50 L55,50" />
+            </svg>
+        </div>
+        <div class="loader-brand">Goldfinger</div>
+        <div class="loader-tagline">Excellence in Motion</div>
+        <div class="loader-status" id="loadStatus">Initializing Luxury...</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="nav-logo">
+            <svg viewBox="0 0 100 100">
+                <polygon points="50,15 85,50 50,85 15,50" stroke="#C9A84C" stroke-width="2.5" fill="none" />
+                <path d="M65,40 C60,35 50,35 45,40 C40,45 40,55 45,60 C50,65 60,65 65,60 L65,52 L55,52" stroke="#C9A84C" stroke-width="2" fill="none" />
+            </svg>
+            <span class="nav-logo-text">Goldfinger</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#why">Why Us</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <a href="tel:8764013582" class="nav-phone-header">Book Now</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div id="hero-bg" class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-gold-line"></div>
+            <h1>Refined Travel.<br><span>Elevated Experience.</span></h1>
+            <p class="hero-sub">Reliable, professional transportation with a focus on comfort and simplicity.</p>
+            <div class="hero-phones">
+                <a href="tel:8764013582" class="hero-phone-btn">876-401-3582</a>
+                <a href="tel:07723002749" class="hero-phone-btn">077-230-02749</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="fade-in">
+                    <span class="section-label">About</span>
+                    <h2>A Refined Approach</h2>
+                    <div class="gold-divider"></div>
+                    <p>Goldfinger Rental delivers a seamless and dependable transportation experience. With a focus on simplicity, comfort, and professionalism, every journey is handled with care and attention to detail.</p>
+                </div>
+                <div class="fade-in" style="display: flex; justify-content: center;">
+                    <svg width="200" height="200" viewBox="0 0 100 100" style="opacity: 0.15;">
+                        <polygon points="50,5 95,50 50,95 5,50" stroke="#C9A84C" stroke-width="1.5" fill="none"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section section-alt" id="services">
+        <div class="container">
+            <div class="fade-in" style="text-align: center;">
+                <span class="section-label">What We Offer</span>
+                <h2>Our Services</h2>
+                <div class="gold-divider" style="margin: 30px auto;"></div>
+            </div>
+            <div class="services-grid">
+                <div class="service-card fade-in">
+                    <svg class="service-icon" viewBox="0 0 24 24"><path d="M12 21l-9-9 9-9 9 9-9 9z" stroke="currentColor"/></svg>
+                    <h3>Vehicle Rental</h3>
+                    <p>Premium vehicles available for your exclusive travel needs.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <svg class="service-icon" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor"/></svg>
+                    <h3>Flexible Scheduling</h3>
+                    <p>Arrangements tailored precisely to your timeline.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <svg class="service-icon" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor"/></svg>
+                    <h3>Well-Maintained</h3>
+                    <p>Clean, expertly serviced, and prepared for your arrival.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <svg class="service-icon" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="currentColor"/></svg>
+                    <h3>Reliable Service</h3>
+                    <p>A standard of dependable travel you can count on.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <svg class="service-icon" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke="currentColor"/></svg>
+                    <h3>Direct Contact</h3>
+                    <p>Personal communication directly with our representatives.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="section" id="why">
+        <div class="container">
+            <div class="fade-in" style="text-align: center;">
+                <span class="section-label">Why Goldfinger</span>
+                <h2>Why Choose Us</h2>
+                <div class="gold-divider" style="margin: 30px auto;"></div>
+            </div>
+            <div class="why-grid">
+                <div class="why-item fade-in">
+                    <div class="why-number">01</div>
+                    <h3>Professional & Discreet</h3>
+                    <p>Service delivered with utmost professionalism and respect for your complete privacy.</p>
+                </div>
+                <div class="why-item fade-in">
+                    <div class="why-number">02</div>
+                    <h3>Consistent Quality</h3>
+                    <p>Ensuring the same exceptional standard of excellence on every single journey.</p>
+                </div>
+                <div class="why-item fade-in">
+                    <div class="why-number">03</div>
+                    <h3>Effortless Process</h3>
+                    <p>Simple, streamlined arrangements without unnecessary complications.</p>
+                </div>
+                <div class="why-item fade-in">
+                    <div class="why-number">04</div>
+                    <h3>Trusted Service</h3>
+                    <p>A reputation built firmly on consistency, reliability, and client satisfaction.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section section-alt" id="testimonials">
+        <div class="container">
+            <div class="fade-in" style="text-align: center;">
+                <span class="section-label">Testimonials</span>
+                <h2>What Clients Say</h2>
+            </div>
+            <div class="testimonial-slider">
+                <div class="testimonial-slide active">
+                    <div class="testimonial-quote">"Smooth and reliable service. The only way I travel."</div>
+                    <div class="testimonial-author">Satisfied Client</div>
+                </div>
+                <div class="testimonial-slide">
+                    <div class="testimonial-quote">"Professional from start to finish. Highly recommended."</div>
+                    <div class="testimonial-author">Satisfied Client</div>
+                </div>
+                <div class="testimonial-slide">
+                    <div class="testimonial-quote">"Simple, clean, and dependable every time."</div>
+                    <div class="testimonial-author">Satisfied Client</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact">
+        <div class="container">
+            <div class="fade-in" style="text-align: center;">
+                <span class="section-label">Get in Touch</span>
+                <h2>Direct Contact</h2>
+                <div class="gold-divider" style="margin: 30px auto;"></div>
+                
+                <span class="contact-rep">Mr. Goldfinger</span>
+                <span class="contact-role">Your Executive Representative</span>
+
+                <div class="contact-grid-numbers">
+                    <a href="tel:8764013582" class="phone-btn-contact">
+                        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        876-401-3582
+                    </a>
+                    <a href="tel:07723002749" class="phone-btn-contact">
+                        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        077-230-02749
+                    </a>
+                </div>
+                
+                <p style="margin-top: 40px; font-size: 0.85rem; color: var(--white-dim); letter-spacing: 1px;">Arrangements are available 24/7 for your convenience.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-brand">Goldfinger Rental</div>
+            <p class="footer-copy">© 2024 Goldfinger Rental. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const apiKey = ""; // Runtime key
+        let imageIsReady = false;
+
+        // Generate the Toyota Wish Hero Image - Triggered immediately
+        async function generateHeroImage() {
+            const statusEl = document.getElementById('loadStatus');
+            const prompt = "A highly realistic, professional studio photograph of a sleek, black Toyota Wish luxury car. Cinematic lighting, dramatic reflections on the bodywork, 8k resolution, ultra-detailed, photorealistic. The car is positioned at a 3/4 angle against an elegant dark studio background.";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+            const payload = { instances: [{ prompt: prompt }], parameters: { sampleCount: 1 } };
+
+            let attempts = 0;
+            const maxAttempts = 5;
+
+            while (attempts < maxAttempts) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        body: JSON.stringify(payload),
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+
+                    if (!response.ok) throw new Error('API request failed');
+
+                    const result = await response.json();
+                    const base64Data = result.predictions?.[0]?.bytesBase64Encoded;
+                    if (base64Data) {
+                        const imgUrl = `data:image/png;base64,${base64Data}`;
+                        const heroBg = document.getElementById('hero-bg');
+                        
+                        // Create a temporary image object to ensure it's fully decoded
+                        const img = new Image();
+                        img.onload = () => {
+                            heroBg.style.backgroundImage = `url(${imgUrl})`;
+                            heroBg.classList.add('loaded');
+                            imageIsReady = true;
+                            hideLoader();
+                        };
+                        img.src = imgUrl;
+                        return;
+                    }
+                } catch (err) {
+                    attempts++;
+                    await new Promise(r => setTimeout(r, Math.pow(2, attempts) * 1000));
+                }
+            }
+            // If generation fails completely after retries
+            imageIsReady = true;
+            hideLoader();
+        }
+
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+            // Ensure loader is only hidden if image is ready AND at least 3.5s have passed for animation
+            if (imageIsReady) {
+                loader.classList.add('hidden');
+            }
+        }
+
+        // Start generation immediately
+        generateHeroImage();
+
+        // Safety fallback: Hide loader after 10s regardless
+        setTimeout(() => {
+            imageIsReady = true;
+            hideLoader();
+        }, 10000);
+
+        // Sticky Navbar
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80);
+        });
+
+        // Reveal on Scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Testimonial Slider
+        const slides = document.querySelectorAll('.testimonial-slide');
+        let currentSlide = 0;
+        setInterval(() => {
+            if (slides.length === 0) return;
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 5000);
+
+        // Navigation Smooth Scroll
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+```
